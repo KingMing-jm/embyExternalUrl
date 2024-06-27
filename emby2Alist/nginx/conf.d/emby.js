@@ -12,22 +12,22 @@ async function redirect2Pan(r) {
   events.njsOnExit(`redirect2Pan: ${r.uri}`);
 
   const ua = r.headersIn["User-Agent"];
-  r.warn(`redirect2Pan, UA: ${ua}`);
-  r.warn(`redirect2Pan, : ${r.uri}`);
+  //r.warn(`redirect2Pan, UA: ${ua}`);
+  //r.warn(`redirect2Pan, : ${r.uri}`);
 
   // check route cache
   const routeCacheConfig = config.routeCacheConfig;
-  r.warn(`routeCacheConfig: ${routeCacheConfig.enable}`);
+  //r.warn(`routeCacheConfig: ${routeCacheConfig.enable}`);
   if (routeCacheConfig.enable) {
     // webClient download only have itemId on pathParam
     let cacheKey = util.parseExpression(r, routeCacheConfig.keyExpression) ?? r.uri;
-    r.warn(`redirect2Pan cacheKey: ${cacheKey}`);
+    //r.warn(`redirect2Pan cacheKey: ${cacheKey}`);
     let routeDictKey;
     let cachedLink;
     for (let index = 1; index < 3; index++) {
       routeDictKey = `routeL${index}Dict`;
       cachedLink = ngx.shared[routeDictKey].get(cacheKey);
-      r.warn(`redirect2Pan cachedLink: ${cachedLink}`);
+      //r.warn(`redirect2Pan cachedLink: ${cachedLink}`);
       if (!cachedLink) {
         // 115 must use ua
         cachedLink = ngx.shared[routeDictKey].get(`${cacheKey}:${ua}`);
@@ -48,7 +48,7 @@ async function redirect2Pan(r) {
 
   // fetch mount emby/jellyfin file path
   const itemInfo = util.getItemInfo(r);
-  r.warn(`itemInfoUri: ${itemInfo.itemInfoUri}`);
+  //r.warn(`itemInfoUri: ${itemInfo.itemInfoUri}`);
   let embyRes = await util.cost(fetchEmbyFilePath,
     itemInfo.itemInfoUri, 
     itemInfo.itemId, 
@@ -61,7 +61,7 @@ async function redirect2Pan(r) {
   }
 
   // strm file internal text maybe encode
-  r.warn(`notLocal: ${embyRes.notLocal}`);
+  //r.warn(`notLocal: ${embyRes.notLocal}`);
   if (embyRes.notLocal) {
     embyRes.path = decodeURIComponent(embyRes.path);
     r.warn(`notLocal decodeURIComponent embyRes.path`);
@@ -80,11 +80,11 @@ async function redirect2Pan(r) {
       }
     }
   }
-  r.warn(`mount emby file path: ${embyRes.path}`);
+  //r.warn(`mount emby file path: ${embyRes.path}`);
 
   // routeRule, must before xxxPathMapping
   const routeMode = util.getRouteMode(r, embyRes.path, false, embyRes.notLocal);
-  r.warn(`getRouteMode: ${routeMode}`);
+  //r.warn(`getRouteMode: ${routeMode}`);
   if (util.ROUTE_ENUM.proxy == routeMode) {
     // use original link
     return internalRedirect(r);
@@ -100,7 +100,7 @@ async function redirect2Pan(r) {
       embyPathMapping.unshift([0, 0 , s, ""]);
     }
   });
-  r.warn(`embyPathMapping: ${JSON.stringify(embyPathMapping)}`);
+  //r.warn(`embyPathMapping: ${JSON.stringify(embyPathMapping)}`);
   let embyItemPath = embyRes.path;
   embyPathMapping.map(arr => {
     if ((arr[1] == 0 && embyRes.notLocal)
@@ -110,33 +110,7 @@ async function redirect2Pan(r) {
     }
     embyItemPath = util.strMapping(arr[0], embyItemPath, arr[2], arr[3]);
   });
-  r.warn(`mapped emby file path: ${embyItemPath}`);
-  
-  // strm file inner remote link redirect,like: http,rtsp
-  isRemote = util.checkIsRemoteByPath(embyItemPath);
-  if (isRemote) {
-    const rule = util.redirectStrmLastLinkRuleFilter(embyItemPath);
-    if (!!rule && rule.length > 0) {
-      r.warn(`filePath hit redirectStrmLastLinkRule: ${JSON.stringify(rule)}`);
-      let directUrl = await fetchStrmLastLink(embyItemPath, rule[2], rule[3], ua);
-      if (!!directUrl) {
-        embyItemPath = directUrl;
-      } else {
-        r.warn(`warn: fetchStrmLastLink, not expected result, failback once`);
-        directUrl = await fetchStrmLastLink(util.strmLinkFailback(strmLink), rule[2], rule[3], ua);
-        if (!!directUrl) {
-          embyItemPath = directUrl;
-        }
-      }
-    }
-    // need careful encode filePathPart, other don't encode
-    const filePathPart = util.getFilePathPart(embyItemPath);
-    if (filePathPart) {
-      r.warn(`is CloudDrive/AList link, encodeURIComponent filePathPart before: ${embyItemPath}`);
-      embyItemPath = embyItemPath.replace(filePathPart, encodeURIComponent(filePathPart));
-    }
-    return redirect(r, embyItemPath);
-  }
+  //r.warn(`mapped emby file path: ${embyItemPath}`);
 
   // fetch alist direct link
   //const alistFilePath = embyItemPath;
@@ -150,12 +124,12 @@ async function redirect2Pan(r) {
     alistToken,
     ua,
   );
-  r.warn(`fetchAlistPathApi, UA: ${ua}`);
-  r.warn(`alistRes: ${alistRes}`);
+  //r.warn(`fetchAlistPathApi, UA: ${ua}`);
+  //r.warn(`alistRes: ${alistRes}`);
   if (!alistRes.startsWith("error")) {
     // routeRule
     const routeMode = util.getRouteMode(r, alistRes, true, embyRes.notLocal);
-    r.warn(`routeMode: ${routeMode}`);
+    //r.warn(`routeMode: ${routeMode}`);
     if (util.ROUTE_ENUM.proxy == routeMode) {
       // use original link
       return internalRedirect(r);
