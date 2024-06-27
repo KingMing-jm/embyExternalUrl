@@ -50,7 +50,9 @@ const routeRule = [
   // ["transcode", "115-local", "r.args.X-Emby-Client", 0, ["Emby Web", "Emby for iOS", "Infuse"]],
   // ["transcode", "115-local", "filePath", 0, "/mnt/115"],
   // ["block", "filePath", 0, "/mnt/sda4"],
-];
+  //    ["proxy", 1,"filePath", 0, "http://xiaoya.host"],
+      ["redirect", 2,"alistRes", 0, "https://cdnfhnfile.115.com"]
+    ];
 
 // 路径映射,会在 xxxMountPath 之后从上到下依次全部替换一遍,不要有重叠,注意 /mnt 会先被移除掉了
 // 参数1: 0: 默认做字符串替换, 1: 前插, 2: 尾插

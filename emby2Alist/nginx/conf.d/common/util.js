@@ -363,7 +363,11 @@ function checkIsStrmByPath(filePath) {
 
 function checkIsRemoteByPath(filePath) {
   if (!!filePath) {
-    return !filePath.startsWith("/") && !filePath.startsWith("\\");
+    if(filePath.startsWith("http://xiaoya.host")){
+      return false
+    }else {
+      return !filePath.startsWith("/") && !filePath.startsWith("\\");
+    }
   }
   return false;
 }

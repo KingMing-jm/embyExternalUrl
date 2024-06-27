@@ -6,10 +6,10 @@ const strHead = commonConfig.strHead;
 
 // rclone/CD2 挂载的 alist 文件配置,根据实际情况修改下面的设置
 // 访问宿主机上 5244 端口的 alist 地址, 要注意 iptables 给容器放行端口
-const alistAddr = "http://172.17.0.1:5244";
+const zxalistAddr = "http://192.168.1.208:5678";
 
 // alist token, 在 alist 后台查看
-const alistToken = "alsit-123456";
+const alistToken = "alist-09ceb38a-f143-47f7-b255-c3eec819cd7bttuNh45aHWlTOCw9x6XMRMYBoRD6Unr_Q94QSTICtZsK8iIcRu7jGHl9JTILJ7zO";
 
 // alist 是否启用了 sign
 const alistSignEnable = false;
@@ -28,7 +28,7 @@ const alistPublicAddr = "http://youralist.com:5244";
 const cilentSelfAlistRule = [
   // "Emby for iOS"和"Infuse"对于 115 的进度条拖动依赖于此
   // 如果 nginx 为 https,则此 alist 也必须 https,浏览器行为客户端会阻止非 https 请求
-  [2, strHead["115"], alistPublicAddr],
+  //[2, strHead["115"], alistPublicAddr],
   // [2, strHead.ali, alistPublicAddr],
 ];
 

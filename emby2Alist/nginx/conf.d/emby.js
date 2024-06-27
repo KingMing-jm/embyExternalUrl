@@ -13,18 +13,21 @@ async function redirect2Pan(r) {
 
   const ua = r.headersIn["User-Agent"];
   r.warn(`redirect2Pan, UA: ${ua}`);
+  r.warn(`redirect2Pan, : ${r.uri}`);
 
   // check route cache
   const routeCacheConfig = config.routeCacheConfig;
+  r.warn(`routeCacheConfig: ${routeCacheConfig.enable}`);
   if (routeCacheConfig.enable) {
     // webClient download only have itemId on pathParam
     let cacheKey = util.parseExpression(r, routeCacheConfig.keyExpression) ?? r.uri;
-    r.log(`redirect2Pan cacheKey: ${cacheKey}`);
+    r.warn(`redirect2Pan cacheKey: ${cacheKey}`);
     let routeDictKey;
     let cachedLink;
     for (let index = 1; index < 3; index++) {
       routeDictKey = `routeL${index}Dict`;
       cachedLink = ngx.shared[routeDictKey].get(cacheKey);
+      r.warn(`redirect2Pan cachedLink: ${cachedLink}`);
       if (!cachedLink) {
         // 115 must use ua
         cachedLink = ngx.shared[routeDictKey].get(`${cacheKey}:${ua}`);
@@ -136,7 +139,8 @@ async function redirect2Pan(r) {
   }
 
   // fetch alist direct link
-  const alistFilePath = embyItemPath;
+  //const alistFilePath = embyItemPath;
+  const alistFilePath = embyItemPath.replace(/http:\/\/xiaoya\.host\:5678\/d/g, '');
   const alistToken = config.alistToken;
   const alistAddr = config.alistAddr;
   const alistFsGetApiPath = `${alistAddr}/api/fs/get`;
@@ -147,9 +151,11 @@ async function redirect2Pan(r) {
     ua,
   );
   r.warn(`fetchAlistPathApi, UA: ${ua}`);
+  r.warn(`alistRes: ${alistRes}`);
   if (!alistRes.startsWith("error")) {
     // routeRule
     const routeMode = util.getRouteMode(r, alistRes, true, embyRes.notLocal);
+    r.warn(`routeMode: ${routeMode}`);
     if (util.ROUTE_ENUM.proxy == routeMode) {
       // use original link
       return internalRedirect(r);
