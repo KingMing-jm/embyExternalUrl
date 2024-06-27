@@ -6,7 +6,7 @@ const strHead = commonConfig.strHead;
 
 // rclone/CD2 挂载的 alist 文件配置,根据实际情况修改下面的设置
 // 访问宿主机上 5244 端口的 alist 地址, 要注意 iptables 给容器放行端口
-const zxalistAddr = "http://192.168.1.208:5678";
+const alistAddr = "http://192.168.1.208:5678";
 
 // alist token, 在 alist 后台查看
 const alistToken = "alist-09ceb38a-f143-47f7-b255-c3eec819cd7bttuNh45aHWlTOCw9x6XMRMYBoRD6Unr_Q94QSTICtZsK8iIcRu7jGHl9JTILJ7zO";
